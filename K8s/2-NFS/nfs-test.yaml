@@ -1,0 +1,45 @@
+# nfs-test.yaml
+---
+# 1. Create a PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-test-pvc
+  namespace: default
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteMany  # NFS supports RWX
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+# 2. Create a test pod that uses the PVC
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nfs-test-pod
+  namespace: default
+spec:
+  containers:
+  - name: test-container
+    image: busybox:latest
+    command:
+      - sh
+      - -c
+      - |
+        echo "Testing NFS storage..."
+        echo "Hello from NFS test!" > /data/test-file.txt
+        cat /data/test-file.txt
+        ls -la /data/
+        echo "Sleeping for 3600 seconds..."
+        sleep 3600
+    volumeMounts:
+    - name: nfs-storage
+      mountPath: /data
+  volumes:
+  - name: nfs-storage
+    persistentVolumeClaim:
+      claimName: nfs-test-pvc
+  restartPolicy: Never
