@@ -4,7 +4,7 @@
 openwebui:
   image:
     repository: ghcr.io/open-webui/open-webui
-    tag: main  # or 'cuda' for GPU support
+    tag: cuda  # or 'cuda' for GPU support
   
   # Persistent storage for Open WebUI data
   persistence:
@@ -27,7 +27,7 @@ ollama:
   
   # GPU Support
   gpu:
-    enabled: false  # Set to true for GPU
+    enabled: true  # Set to true for GPU
     number: 1
     type: nvidia.com/gpu
   
@@ -48,8 +48,10 @@ ollama:
   
   # Pre-load models (optional)
   models:
-    - llama3
-    - mistral
+    pull:
+      - llama3.1
+      - gemma3
+      - scb10x/typhoon2.1-gemma3-4b
 
 # Ingress Configuration - DISABLED
 ingress:
