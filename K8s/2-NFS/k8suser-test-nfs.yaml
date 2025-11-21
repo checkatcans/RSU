@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-nfs-pvc
+  namespace: k8suser-restricted  # ใช้ namespace ที่มีอยู่แล้ว
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: nfs-client
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-nfs-pod
+  namespace: k8suser-restricted
+spec:
+  containers:
+  - name: test-container
+    image: busybox
+    command: ["/bin/sh"]
+    args: ["-c", "echo 'Test from k8suser' > /data/test.txt && sleep 3600"]
+    volumeMounts:
+    - name: nfs-storage
+      mountPath: /data
+  volumes:
+  - name: nfs-storage
+    persistentVolumeClaim:
+      claimName: test-nfs-pvc
