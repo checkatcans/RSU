@@ -17,6 +17,10 @@ metadata:
   name: test-nfs-pod
   namespace: k8suser-restricted
 spec:
+  securityContext:
+    runAsUser: 1001      # UID ของ k8suser
+    runAsGroup: 1001     # GID ของ k8suser
+    fsGroup: 1001        # สำคัญมาก! ทำให้ไฟล์ที่สร้างเป็นของ group นี้
   containers:
   - name: test-container
     image: busybox
