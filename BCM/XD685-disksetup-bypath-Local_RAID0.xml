@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<diskSetup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <device>
+                <blockdev>/dev/disk/by-path/pci-0000:53:00.0-nvme-1</blockdev>
+                <requiredSize>400G</requiredSize>
+                <partition id="a0" partitiontype="esp">
+                        <size>100M</size>
+                        <type>linux</type>
+                        <filesystem>fat</filesystem>
+                        <mountPoint>/boot/efi</mountPoint>
+                        <mountOptions>defaults,noatime,nodiratime</mountOptions>
+                        </partition>
+                <partition id="a1">
+                        <size>max</size>
+                        <type>linux</type>
+                        <filesystem>xfs</filesystem>
+                        <mountPoint>/</mountPoint> <mountOptions>defaults,noatime,nodiratime</mountOptions>
+                </partition>
+      </device>
+      
+      <device>
+                <blockdev>/dev/nvme6n1</blockdev>
+                <requiredSize>3.5T</requiredSize>
+                <partition id="b1">
+                        <size>max</size>
+                        <type>linux raid</type>
+                </partition>
+      </device>
+      
+      <device>
+                <blockdev>/dev/nvme4n1</blockdev>
+                <requiredSize>3.5T</requiredSize>
+                <partition id="c1">
+                        <size>max</size>
+                        <type>linux raid</type>
+                </partition>
+      </device>
+      
+      <device>
+                <blockdev>/dev/nvme5n1</blockdev>
+                <requiredSize>3.5T</requiredSize>
+                <partition id="d1">
+                        <size>max</size>
+                        <type>linux raid</type>
+                </partition>
+      </device>
+      
+      <device>
+                <blockdev>/dev/nvme0n1</blockdev>
+                <requiredSize>3.5T</requiredSize>
+                <partition id="e1">
+                        <size>max</size>
+                        <type>linux raid</type>
+                </partition>
+      </device>
+      
+      <device>
+                <blockdev>/dev/nvme7n1</blockdev>
+                <requiredSize>3.5T</requiredSize>
+                <partition id="f1">
+                        <size>max</size>
+                        <type>linux raid</type>
+                </partition>
+      </device>
+      
+      <device>
+                <blockdev>/dev/nvme2n1</blockdev>
+                <requiredSize>3.5T</requiredSize>
+                <partition id="g1">
+                        <size>max</size>
+                        <type>linux raid</type>
+                </partition>
+      </device>
+      
+      <device>
+                <blockdev>/dev/nvme1n1</blockdev>
+                <requiredSize>3.5T</requiredSize>
+                <partition id="h1">
+                        <size>max</size>
+                        <type>linux raid</type>
+                </partition>
+      </device>
+      
+      <device>
+                <blockdev>/dev/nvme8n1</blockdev>
+                <requiredSize>3.5T</requiredSize>
+                <partition id="i1">
+                        <size>max</size>
+                        <type>linux raid</type>
+                </partition>
+      </device>
+      
+      <raid id="r1">
+                <member>b1</member>
+                <member>c1</member>
+                <member>d1</member>
+                <member>e1</member>
+                <member>f1</member>
+                <member>g1</member>
+                <member>h1</member>
+                <member>i1</member>
+                <level>0</level>
+                <filesystem>xfs</filesystem>
+                <mountPoint>/scratch</mountPoint>
+                <mountOptions>defaults,noatime,nodiratime</mountOptions>
+      </raid>
+      
+</diskSetup>
