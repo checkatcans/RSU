@@ -19,7 +19,7 @@
       </device>
       
       <device>
-                <blockdev>/dev/nvme6n1</blockdev>
+                <blockdev>/dev/disk/by-path/pci-0000:05:00.0-nvme-1</blockdev>
                 <requiredSize>3400G</requiredSize>
                 <partition id="b1">
                         <size>max</size>
@@ -28,7 +28,7 @@
       </device>
       
       <device>
-                <blockdev>/dev/nvme4n1</blockdev>
+                <blockdev>/dev/disk/by-path/pci-0000:15:00.0-nvme-1</blockdev>
                 <requiredSize>3400G</requiredSize>
                 <partition id="c1">
                         <size>max</size>
@@ -37,7 +37,7 @@
       </device>
       
       <device>
-                <blockdev>/dev/nvme5n1</blockdev>
+                <blockdev>/dev/disk/by-path/pci-0000:65:00.0-nvme-1</blockdev>
                 <requiredSize>3400G</requiredSize>
                 <partition id="d1">
                         <size>max</size>
@@ -46,7 +46,7 @@
       </device>
       
       <device>
-                <blockdev>/dev/nvme0n1</blockdev>
+                <blockdev>/dev/disk/by-path/pci-0000:78:00.0-nvme-1</blockdev>
                 <requiredSize>3400G</requiredSize>
                 <partition id="e1">
                         <size>max</size>
@@ -55,7 +55,7 @@
       </device>
       
       <device>
-                <blockdev>/dev/nvme7n1</blockdev>
+                <blockdev>/dev/disk/by-path/pci-0000:86:00.0-nvme-1</blockdev>
                 <requiredSize>3400G</requiredSize>
                 <partition id="f1">
                         <size>max</size>
@@ -64,7 +64,7 @@
       </device>
       
       <device>
-                <blockdev>/dev/nvme2n1</blockdev>
+                <blockdev>/dev/disk/by-path/pci-0000:95:00.0-nvme-1</blockdev>
                 <requiredSize>3400G</requiredSize>
                 <partition id="g1">
                         <size>max</size>
@@ -73,7 +73,7 @@
       </device>
       
       <device>
-                <blockdev>/dev/nvme1n1</blockdev>
+                <blockdev>/dev/disk/by-path/pci-0000:eb:00.0-nvme-1</blockdev>
                 <requiredSize>3400G</requiredSize>
                 <partition id="h1">
                         <size>max</size>
@@ -82,7 +82,7 @@
       </device>
       
       <device>
-                <blockdev>/dev/nvme8n1</blockdev>
+                <blockdev>/dev/disk/by-path/pci-0000:f7:00.0-nvme-1</blockdev>
                 <requiredSize>3400G</requiredSize>
                 <partition id="i1">
                         <size>max</size>
