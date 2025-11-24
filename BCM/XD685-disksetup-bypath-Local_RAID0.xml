@@ -20,7 +20,7 @@
       
       <device>
                 <blockdev>/dev/nvme6n1</blockdev>
-                <requiredSize>3.5T</requiredSize>
+                <requiredSize>3400G</requiredSize>
                 <partition id="b1">
                         <size>max</size>
                         <type>linux raid</type>
@@ -29,7 +29,7 @@
       
       <device>
                 <blockdev>/dev/nvme4n1</blockdev>
-                <requiredSize>3.5T</requiredSize>
+                <requiredSize>3400G</requiredSize>
                 <partition id="c1">
                         <size>max</size>
                         <type>linux raid</type>
@@ -38,7 +38,7 @@
       
       <device>
                 <blockdev>/dev/nvme5n1</blockdev>
-                <requiredSize>3.5T</requiredSize>
+                <requiredSize>3400G</requiredSize>
                 <partition id="d1">
                         <size>max</size>
                         <type>linux raid</type>
@@ -47,7 +47,7 @@
       
       <device>
                 <blockdev>/dev/nvme0n1</blockdev>
-                <requiredSize>3.5T</requiredSize>
+                <requiredSize>3400G</requiredSize>
                 <partition id="e1">
                         <size>max</size>
                         <type>linux raid</type>
@@ -56,7 +56,7 @@
       
       <device>
                 <blockdev>/dev/nvme7n1</blockdev>
-                <requiredSize>3.5T</requiredSize>
+                <requiredSize>3400G</requiredSize>
                 <partition id="f1">
                         <size>max</size>
                         <type>linux raid</type>
@@ -65,7 +65,7 @@
       
       <device>
                 <blockdev>/dev/nvme2n1</blockdev>
-                <requiredSize>3.5T</requiredSize>
+                <requiredSize>3400G</requiredSize>
                 <partition id="g1">
                         <size>max</size>
                         <type>linux raid</type>
@@ -74,7 +74,7 @@
       
       <device>
                 <blockdev>/dev/nvme1n1</blockdev>
-                <requiredSize>3.5T</requiredSize>
+                <requiredSize>3400G</requiredSize>
                 <partition id="h1">
                         <size>max</size>
                         <type>linux raid</type>
@@ -83,7 +83,7 @@
       
       <device>
                 <blockdev>/dev/nvme8n1</blockdev>
-                <requiredSize>3.5T</requiredSize>
+                <requiredSize>3400G</requiredSize>
                 <partition id="i1">
                         <size>max</size>
                         <type>linux raid</type>
