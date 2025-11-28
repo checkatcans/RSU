@@ -100,7 +100,7 @@
                 <member>h1</member>
                 <member>i1</member>
                 <level>0</level>
-                <filesystem>xfs</filesystem>
+                <filesystem>ext4</filesystem>
                 <mountPoint>/scratch</mountPoint>
                 <mountOptions>defaults,noatime,nodiratime</mountOptions>
       </raid>
