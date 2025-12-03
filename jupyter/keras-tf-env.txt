@@ -1,0 +1,7 @@
+(base) [uat01@rsu-login ~]$ conda create --name keras_env python=3.9
+(base) [uat01@rsu-login ~]$  conda activate keras_env
+(keras_env) [uat01@rsu-login ~]$ conda install keras
+(keras_env) [uat01@rsu-login ~]$ pip install 'tensorflow[and-cuda]'
+(keras_env) [uat01@rsu-login ~]$ conda install ipykernel
+(keras_env) [uat01@rsu-login ~]$ python -m ipykernel install --user --name=keras_env --display-name "Keras Environment"
+(keras_env) [uat01@rsu-login ~]$ pip install cm-jupyter-eg-kernel-wlm==2.0.0
