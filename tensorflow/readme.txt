@@ -19,6 +19,7 @@ srun --container-image="nvcr.io#nvidia/tensorflow:25.02-tf2-py3" \
         python /home/uat01/model/test_gpu.py
 
 # Result
+# (tf_gpu) [uat01@rsu-login model]$ tail -f slurm-183.out
 2025-12-04 21:38:48.354891: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:485] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
 2025-12-04 21:38:48.395470: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:8473] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
 2025-12-04 21:38:48.410145: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1471] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
