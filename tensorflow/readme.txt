@@ -5,6 +5,19 @@
 (tf_gpu) [uat01@rsu-login ~]$ conda install keras
 (tf_gpu) [uat01@rsu-login ~]$ conda install jupyterlab tensorboard
 
+
+(tf_gpu) [uat01@rsu-login model]$ cat srun_tensorflow_serving.sh
+#!/bin/bash
+#SBATCH --job-name=ngc_gpu_test
+#SBATCH --nodes=1
+#SBATCH --gres=gpu:1 # Request 1 GPU
+#SBATCH --time=00:10:00
+#SBATCH --mem=16G
+
+srun --container-image="nvcr.io#nvidia/tensorflow:25.02-tf2-py3" \
+     --container-mount-home \
+        python /home/uat01/model/test_gpu.py
+
 # Result
 2025-12-04 21:38:48.354891: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:485] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
 2025-12-04 21:38:48.395470: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:8473] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
