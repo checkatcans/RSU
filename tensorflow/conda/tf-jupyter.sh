@@ -32,7 +32,7 @@ localhost:${port}  (prefix w/ https:// if using password)
 # load modules or conda environments here
 # uncomment the following two lines to use your conda environment called notebook_env
 # module load miniconda
-# source activate notebook_env
+source activate tf_nvidia_25.02
 
 srun --container-image="nvcr.io#nvidia/tensorflow:25.02-tf2-py3" \
      --container-mount-home \
