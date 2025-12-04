@@ -1,0 +1,78 @@
+
+[root@rsu-login 4-MIG]# helm list -n gpu-operator
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
+gpu-operator    gpu-operator    1               2025-11-16 23:07:05.652479438 +0700 +07 deployed        gpu-operator-v25.3.3    v25.3.3
+[root@rsu-login 4-MIG]# helm uninstall -n gpu-operator gpu-operator
+I1205 02:14:57.238278  461373 warnings.go:110] "Warning: spec.template.spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].prefer
+ence.matchExpressions[0].key: node-role.kubernetes.io/master is use \"node-role.kubernetes.io/control-plane\" instead"
+release "gpu-operator" uninstalled
+
+[root@rsu-login 4-MIG]# helm list -n gpu-operator
+NAME    NAMESPACE       REVISION        UPDATED STATUS  CHART   APP VERSION
+[root@rsu-login 4-MIG]# helm install --wait --generate-name \
+    -n gpu-operator --create-namespace \
+    nvidia/gpu-operator \
+    --version=v25.10.1 \
+    --set mig.strategy=single
+Error: INSTALLATION FAILED: repo nvidia not found
+
+[root@rsu-login 4-MIG]# helm repo add nvidia https://helm.ngc.nvidia.com/nvidia
+"nvidia" has been added to your repositories
+
+[root@rsu-login 4-MIG]# helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "nvidia" chart repository
+Update Complete. ⎈Happy Helming!⎈
+
+[root@rsu-login 4-MIG]# helm install --wait --generate-name     -n gpu-operator --create-namespace     nvidia/gpu-operator     --version=v25.10.1     --set
+ mig.strategy=single
+
+kubectl get pods -n gpu-operator -w
+
+[root@rsu-login 4-MIG]# kubectl get pods -n gpu-operator -w
+NAME                                                              READY   STATUS      RESTARTS   AGE
+gpu-feature-discovery-w4fdk                                       1/1     Running     0          2m25s
+gpu-operator-1764875794-node-feature-discovery-gc-68cf897bmqz8m   1/1     Running     0          3m3s
+gpu-operator-1764875794-node-feature-discovery-master-57f6zbjf9   1/1     Running     0          3m3s
+gpu-operator-1764875794-node-feature-discovery-worker-9pqpk       1/1     Running     0          3m3s
+gpu-operator-1764875794-node-feature-discovery-worker-f52dk       1/1     Running     0          3m3s
+gpu-operator-8688d6f664-vrrt2                                     1/1     Running     0          3m3s
+nvidia-container-toolkit-daemonset-c2ppc                          1/1     Running     0          2m27s
+nvidia-cuda-validator-m7qn7                                       0/1     Completed   0          2m9s
+nvidia-dcgm-exporter-2mm4j                                        1/1     Running     0          2m25s
+nvidia-device-plugin-daemonset-cxnsb                              1/1     Running     0          2m26s
+nvidia-mig-manager-sjlxn                                          1/1     Running     0          2m25s
+nvidia-operator-validator-w7kgk                                   1/1     Running     0          2m26s
+
+[root@rsu-login 4-MIG]# kubectl get node -o json | jq '.items[].metadata.labels' | grep gpu
+"nvidia.com/gpu.engines.jpeg": "7",
+  "nvidia.com/gpu.engines.ofa": "1",
+  "nvidia.com/gpu.family": "hopper",
+  "nvidia.com/gpu.machine": "ProLiant-DL385-Gen11",
+  "nvidia.com/gpu.memory": "95360",
+  "nvidia.com/gpu.mode": "compute",
+  "nvidia.com/gpu.multiprocessors": "132",
+  "nvidia.com/gpu.present": "true",
+  "nvidia.com/gpu.product": "NVIDIA-H100-NVL-MIG-7g.94gb",
+  "nvidia.com/gpu.replicas": "1",
+  "nvidia.com/gpu.sharing-strategy": "none",
+  "nvidia.com/gpu.slices.ci": "7",
+  "nvidia.com/gpu.slices.gi": "7",
+
+
+cat << EOF | kubectl create -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cuda-vectoradd
+spec:
+  restartPolicy: OnFailure
+  containers:
+  - name: vectoradd
+    image: nvidia/samples:vectoradd-cuda11.2.1
+    resources:
+      limits:
+        nvidia.com/gpu: 1
+  nodeSelector:
+    nvidia.com/gpu.product: NVIDIA-H100-NVL-MIG-7g.94gb
+EOF
