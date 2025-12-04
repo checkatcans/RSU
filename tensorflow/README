@@ -1,11 +1,27 @@
-(tf_gpu) [uat01@rsu-login ~]$ conda create --name tf_gpu python=3.12.3
-(tf_gpu) [uat01@rsu-login ~]$ conda activate tf_gpu
-(tf_gpu) [uat01@rsu-login ~]$ conda install -c nvidia cudatoolkit
-(tf_gpu) [uat01@rsu-login ~]$ conda install tensorflow
-(tf_gpu) [uat01@rsu-login ~]$ conda install keras
-(tf_gpu) [uat01@rsu-login ~]$ conda install jupyterlab tensorboard
+# test_gpu.py
+import tensorflow as tf
+
+print("TensorFlow version:", tf.__version__)
+print("Built with CUDA:", tf.test.is_built_with_cuda())
+print("GPU devices:", tf.config.list_physical_devices('GPU'))
+
+# Test GPU computation
+if tf.config.list_physical_devices('GPU'):
+    print("\nGPU is available and working!")
+    
+    # Create a simple computation on GPU
+    with tf.device('/GPU:0'):
+        a = tf.constant([[1.0, 2.0], [3.0, 4.0]])
+        b = tf.constant([[5.0, 6.0], [7.0, 8.0]])
+        c = tf.matmul(a, b)
+    
+    print("Matrix multiplication result:")
+    print(c.numpy())
+else:
+    print("\nNo GPU found. Running on CPU.")
 
 
+# srun_tensorflow_serving.sh
 (tf_gpu) [uat01@rsu-login model]$ cat srun_tensorflow_serving.sh
 #!/bin/bash
 #SBATCH --job-name=ngc_gpu_test
@@ -19,7 +35,7 @@ srun --container-image="nvcr.io#nvidia/tensorflow:25.02-tf2-py3" \
         python /home/uat01/model/test_gpu.py
 
 # Result
-# (tf_gpu) [uat01@rsu-login model]$ tail -f slurm-183.out
+(tf_gpu) [uat01@rsu-login model]$ tail -f slurm-183.out
 2025-12-04 21:38:48.354891: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:485] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
 2025-12-04 21:38:48.395470: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:8473] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
 2025-12-04 21:38:48.410145: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1471] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
