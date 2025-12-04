@@ -1,0 +1,78 @@
+[root@rsu-login RSU]# kubectl get node -o json |   jq '.items[0].metadata.labels | with_entries(select(.key | startswith("nvidia.com")))' | grep gpu
+  "nvidia.com/gpu.compute.major": "9",
+  "nvidia.com/gpu.compute.minor": "0",
+  "nvidia.com/gpu.count": "2",
+  "nvidia.com/gpu.deploy.container-toolkit": "true",
+  "nvidia.com/gpu.deploy.dcgm": "true",
+  "nvidia.com/gpu.deploy.dcgm-exporter": "true",
+  "nvidia.com/gpu.deploy.device-plugin": "true",
+  "nvidia.com/gpu.deploy.driver": "true",
+  "nvidia.com/gpu.deploy.gpu-feature-discovery": "true",
+  "nvidia.com/gpu.deploy.mig-manager": "true",
+  "nvidia.com/gpu.deploy.node-status-exporter": "true",
+  "nvidia.com/gpu.deploy.operator-validator": "true",
+  "nvidia.com/gpu.family": "hopper",
+  "nvidia.com/gpu.machine": "ProLiant-DL385-Gen11",
+  "nvidia.com/gpu.memory": "95830",
+  "nvidia.com/gpu.mode": "compute",
+  "nvidia.com/gpu.present": "true",
+  "nvidia.com/gpu.product": "NVIDIA-H100-NVL",
+  "nvidia.com/gpu.replicas": "1",
+  "nvidia.com/gpu.sharing-strategy": "none",
+  "nvidia.com/vgpu.present": "false"
+[root@rsu-login RSU]#
+
+kubectl apply -n gpu-operator -f custom-mig-config.yaml 
+
+kubectl patch clusterpolicies.nvidia.com/cluster-policy     --type='json'     -p='[{"op":"replace", "path":"/spec/migManager/config/name", "value":"custom-mig-config"}]'
+
+kubectl get nodes
+
+ubectl label nodes rsu-inference nvidia.com/mig.config=custom-config --overwrite
+
+kubectl get node -o json |    jq '.items[0].metadata.labels | with_entries(select(.key | startswith("nvidia.com")))'
+
+[root@rsu-login 4-MIG]# kubectl get node -o json |    jq '.items[0].metadata.labels | with_entries(select(.key | startswith("nvidia.com")))' | grep mig
+  "nvidia.com/gpu.deploy.mig-manager": "true",
+  "nvidia.com/mig.config": "custom-config",
+  "nvidia.com/mig.config.state": "success"
+[root@rsu-login 4-MIG]#
+
+[root@rsu-login RSU]# kubectl get node -o json |   jq '.items[0].metadata.labels | with_entries(select(.key | startswith("nvidia.com")))' | grep gpu
+  "nvidia.com/gpu.compute.major": "9",
+  "nvidia.com/gpu.compute.minor": "0",
+  "nvidia.com/gpu.count": "2",
+  "nvidia.com/gpu.deploy.container-toolkit": "true",
+  "nvidia.com/gpu.deploy.dcgm": "true",
+  "nvidia.com/gpu.deploy.dcgm-exporter": "true",
+  "nvidia.com/gpu.deploy.device-plugin": "true",
+  "nvidia.com/gpu.deploy.driver": "true",
+  "nvidia.com/gpu.deploy.gpu-feature-discovery": "true",
+  "nvidia.com/gpu.deploy.mig-manager": "true",
+  "nvidia.com/gpu.deploy.node-status-exporter": "true",
+  "nvidia.com/gpu.deploy.operator-validator": "true",
+  "nvidia.com/gpu.family": "hopper",
+  "nvidia.com/gpu.machine": "ProLiant-DL385-Gen11",
+  "nvidia.com/gpu.memory": "95830",
+  "nvidia.com/gpu.mode": "compute",
+  "nvidia.com/gpu.present": "true",
+  "nvidia.com/gpu.product": "NVIDIA-H100-NVL",
+  "nvidia.com/gpu.replicas": "1",
+  "nvidia.com/gpu.sharing-strategy": "none",
+  "nvidia.com/vgpu.present": "false"
+[root@rsu-login RSU]#
+
+[root@rsu-login 4-MIG]# kubectl get pods -n gpu-operator -w
+NAME                                                          READY   STATUS             RESTARTS      AGE
+gpu-feature-discovery-r92s9                                   1/1     Running            0             4m10s
+gpu-operator-5b98787478-bvd4b                                 1/1     Running            1 (14d ago)   18d
+gpu-operator-node-feature-discovery-gc-86f6495b55-srwlk       1/1     Running            1 (14d ago)   18d
+gpu-operator-node-feature-discovery-master-694467d5db-jvvsq   1/1     Running            1 (14d ago)   18d
+gpu-operator-node-feature-discovery-worker-qzf6j              1/1     Running            1 (14d ago)   18d
+gpu-operator-node-feature-discovery-worker-wb25v              1/1     Running            1 (14d ago)   18d
+nvidia-cuda-validator-9cllb                                   0/1     Completed          0             4m7s
+nvidia-dcgm-exporter-l7mf9                                    1/1     Running            0             4m10s
+nvidia-device-plugin-daemonset-427jf                          0/1     CrashLoopBackOff   5 (55s ago)   4m10s
+nvidia-mig-manager-47sbm                                      1/1     Running            0             6m28s
+nvidia-operator-validator-pm4qc                               0/1     Init:3/4           1 (90s ago)   4m10s
+[root@rsu-login 4-MIG]#
