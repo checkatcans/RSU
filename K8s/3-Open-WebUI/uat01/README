@@ -6,7 +6,46 @@ kubectl auth can-i create deployments --namespace=uat01-restricted
 helm repo add open-webui https://helm.openwebui.com/
 helm repo update
 
+cd /home/uat01/RSU/K8s/3-Open-WebUI/uat01
+
 # Install the chart in the uat01-restricted namespace
 helm install open-webui-uat01 open-webui/open-webui \
   --namespace uat01-restricted \
-  --values values-uat01.yaml 
+  --values values.yaml 
+
+(base) [uat01@rsu-login uat01]$ helm list -n uat01-restricted
+NAME                    NAMESPACE               REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
+open-webui-uat01        uat01-restricted        1               2025-12-06 00:45:38.502253289 +0700 +07 deployed        open-webui-8.19.0       0.6.41
+(base) [uat01@rsu-login uat01]$
+
+
+(base) [uat01@rsu-login uat01]$ kubectl get all -n uat01-restricted
+NAME                                        READY   STATUS    RESTARTS   AGE
+pod/open-webui-0                            1/1     Running   0          43s
+pod/open-webui-ollama-766d87c44d-p9cj8      1/1     Running   0          43s
+pod/open-webui-pipelines-57b9dc5fc7-lnl8t   1/1     Running   0          43s
+
+NAME                           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+service/open-webui             NodePort    10.150.161.40   <none>        80:30801/TCP   43s
+service/open-webui-ollama      ClusterIP   10.150.11.202   <none>        11434/TCP      43s
+service/open-webui-pipelines   ClusterIP   10.150.41.206   <none>        9099/TCP       43s
+
+NAME                                   READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/open-webui-ollama      1/1     1            1           43s
+deployment.apps/open-webui-pipelines   1/1     1            1           43s
+
+NAME                                              DESIRED   CURRENT   READY   AGE
+replicaset.apps/open-webui-ollama-766d87c44d      1         1         1       43s
+replicaset.apps/open-webui-pipelines-57b9dc5fc7   1         1         1       43s
+
+NAME                          READY   AGE
+statefulset.apps/open-webui   1/1     43s
+(base) [uat01@rsu-login uat01]$
+
+OpenBrowser to http://171.102.216.177:30801/
+
+Name: Peeranon Wattanapong
+Email: check@rsu.hpc.local
+Password: ******
+
+
