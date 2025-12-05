@@ -33,7 +33,11 @@ pip install cudf-cu12==24.12.* cuml-cu12==24.12.* cugraph-cu12==24.12.* cupy-cud
 # 10. Install Horovod
 HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITH_MPI=1 pip install horovod==0.28.1
 
-# 11. Install Simple Jupyter Notebook (NOT JupyterLab)
-pip install notebook==6.5.7 jupyter jupyter-client jupyter-core ipykernel ipywidgets tensorboard
-
 conda install -y matplotlib
+
+
+
+
+
+# 11. Install Simple Jupyter Notebook (NOT JupyterLab)
+pip install notebook==6.5.7 jupyter jupyter-client jupyter-core ipykernel ipywidgets tensorboar
