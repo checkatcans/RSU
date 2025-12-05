@@ -1,0 +1,12 @@
+su - uat01
+kubectl get namespace uat01-restricted
+kubectl auth can-i create deployments --namespace=uat01-restricted
+
+# Add the Open WebUI Helm repository (if not already added)
+helm repo add open-webui https://helm.openwebui.com/
+helm repo update
+
+# Install the chart in the uat01-restricted namespace
+helm install open-webui-uat01 open-webui/open-webui \
+  --namespace uat01-restricted \
+  --values values-uat01.yaml 
