@@ -1,0 +1,74 @@
+# values.yaml
+
+# Open WebUI Configuration
+openwebui:
+  image:
+    repository: ghcr.io/open-webui/open-webui
+    tag: cuda  # or 'cuda' for GPU support
+  
+  # Persistent storage for Open WebUI data
+  persistence:
+    enabled: true
+    size: 2Gi
+    storageClass: "nfs-client"  # Use your NFS storage class
+
+  # Resource limits
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "2000m"
+
+# Ollama Configuration (bundled LLM server)
+ollama:
+  enabled: true  # Set to false if using external API
+  
+  # GPU Support
+  gpu:
+    enabled: true  # Set to true for GPU
+    number: 1
+    type: nvidia.com/gpu
+  
+  # Persistent storage for models
+  persistence:
+    enabled: true
+    size: 30Gi  # Models can be large
+    storageClass: "nfs-client"  # Use your NFS storage class
+  
+  # Resource limits
+  resources:
+    requests:
+      memory: "4Gi"
+      cpu: "2000m"
+    limits:
+      memory: "8Gi"
+      cpu: "4000m"
+  
+  # Pre-load models (optional)
+  models:
+    pull:
+      - llama3.1:405b
+      - gemma3
+      - scb10x/typhoon2.1-gemma3-4b
+
+# Ingress Configuration - DISABLED
+ingress:
+  enabled: false
+
+# Service Configuration - NodePort
+service:
+  type: NodePort
+  port: 80
+  nodePort: 30801  # Choose a port between 30000-32767
+  # If you don't specify nodePort, Kubernetes will assign one randomly
+
+# Environment Variables
+env:
+  # Generate secret key with: openssl rand -hex 32
+  - name: WEBUI_SECRET_KEY
+    value: "8a59659ab6886998df2ac4029448c4f08cefe89546dc2565e517eb41fdabf9e4"
+
+nodeSelector:
+  nvidia.com/gpu.product: NVIDIA-H100-NVL-MIG-7g.94gb
