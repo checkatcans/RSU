@@ -69,3 +69,6 @@ env:
   # Generate secret key with: openssl rand -hex 32
   - name: WEBUI_SECRET_KEY
     value: "8a59659ab6886998df2ac4029448c4f08cefe89546dc2565e517eb41fdabf9e4"
+
+nodeSelector:
+  nvidia.com/gpu.product: NVIDIA-H100-NVL-MIG-7g.94gb
