@@ -1,1 +1,101 @@
+su - uat03
+kubectl get namespace uat03-restricted
+kubectl auth can-i create deployments --namespace=uat03-restricted
+
+# Add the Open WebUI Helm repository (if not already added)
+helm repo add open-webui https://helm.openwebui.com/
+helm repo update
+
+cd /home/uat01/RSU/K8s/3-Open-WebUI/uat01
+
+# Install the chart in the uat01-restricted namespace
+helm install open-webui-uat03 open-webui/open-webui \
+  --namespace uat03-restricted \
+  --values values.yaml
+(base) [uat03@rsu-login uat03]$ helm install open-webui-uat03 open-webui/open-webui   --namespace uat03-restricted   --values values.yaml
+NAME: open-webui-uat03
+LAST DEPLOYED: Sun Dec  7 18:04:29 2025
+NAMESPACE: uat03-restricted
+STATUS: deployed
+REVISION: 1
+NOTES:
+🎉 Welcome to Open WebUI!!
+ ██████╗ ██████╗ ███████╗███╗   ██╗    ██╗    ██╗███████╗██████╗ ██╗   ██╗██╗
+██╔═══██╗██╔══██╗██╔════╝████╗  ██║    ██║    ██║██╔════╝██╔══██╗██║   ██║██║
+██║   ██║██████╔╝█████╗  ██╔██╗ ██║    ██║ █╗ ██║█████╗  ██████╔╝██║   ██║██║
+██║   ██║██╔═══╝ ██╔══╝  ██║╚██╗██║    ██║███╗██║██╔══╝  ██╔══██╗██║   ██║██║
+╚██████╔╝██║     ███████╗██║ ╚████║    ╚███╔███╔╝███████╗██████╔╝╚██████╔╝██║
+ ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═══╝     ╚══╝╚══╝ ╚══════╝╚═════╝  ╚═════╝ ╚═╝
+
+v0.6.41 - building the best open-source AI user interface.
+ - Chart Version: v8.19.0
+ - Project URL 1: https://www.openwebui.com/
+ - Project URL 2: https://github.com/open-webui/open-webui
+ - Documentation: https://docs.openwebui.com/
+ - Chart URL: https://github.com/open-webui/helm-charts
+
+Open WebUI is a web-based user interface that works with Ollama, OpenAI, Claude 3, Gemini and more.
+This interface allows you to easily interact with local AI models.
+
+1. Deployment Information:
+  - Chart Name: open-webui
+  - Release Name: open-webui-uat03
+  - Namespace: uat03-restricted
+
+2. Access the Application:
+  Access via NodePort service:
+    export NODE_PORT=$(kubectl get -n uat03-restricted -o jsonpath="{.spec.ports[0].nodePort}" services open-webui)
+    export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+    echo http://$NODE_IP:$NODE_PORT
+
+3. Useful Commands:
+  - Check deployment status:
+      helm status open-webui-uat03 -n uat03-restricted
+
+  - Get detailed information:
+      helm get all open-webui-uat03 -n uat03-restricted
+
+  - View logs:
+      kubectl logs -f statefulset/open-webui -n uat03-restricted
+
+4. Cleanup:
+  - Uninstall the deployment:
+      helm uninstall open-webui-uat03 -n uat03-restricted
+(base) [uat03@rsu-login uat03]$
+
+
+
+(base) [uat01@rsu-login uat01]$ helm list -n uat03-restricted
+NAME                    NAMESPACE               REVISION        UPDATED                                 STATUS          CHART                APP VERSION
+open-webui-uat03        uat03-restricted        1               2025-12-07 18:04:29.06209729 +0700 +07  deployed        open-webui-8.19.0    0.6.41
+
+
+(base) [uat03@rsu-login uat03]$ kubectl get all -n uat03-restricted
+NAME                                        READY   STATUS    RESTARTS   AGE
+pod/open-webui-0                            1/1     Running   0          43s
+pod/open-webui-ollama-6bdf6f8594-cn2nz      1/1     Running   0          43s
+pod/open-webui-pipelines-6774dd6855-hgvtz   1/1     Running   0          43s
+
+NAME                           TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+service/open-webui             NodePort    10.150.199.90    <none>        80:30803/TCP   43s
+service/open-webui-ollama      ClusterIP   10.150.82.244    <none>        11434/TCP      43s
+service/open-webui-pipelines   ClusterIP   10.150.207.102   <none>        9099/TCP       43s
+
+NAME                                   READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/open-webui-ollama      1/1     1            1           43s
+deployment.apps/open-webui-pipelines   1/1     1            1           43s
+
+NAME                                              DESIRED   CURRENT   READY   AGE
+replicaset.apps/open-webui-ollama-6bdf6f8594      1         1         1       43s
+replicaset.apps/open-webui-pipelines-6774dd6855   1         1         1       43s
+
+NAME                          READY   AGE
+statefulset.apps/open-webui   1/1     43s
+(base) [uat03@rsu-login uat03]$
+
+OpenBrowser to http://171.102.216.177:30803/
+
+Name: Peeranon Wattanapong
+Email: check@rsu.hpc.local
+Password: ******
 
