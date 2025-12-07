@@ -97,5 +97,12 @@ OpenBrowser to http://171.102.216.177:30803/
 
 Name: Peeranon Wattanapong
 Email: check@rsu.hpc.local
+Role: Admin
 Password: ******
+
+ทำการ add user เข้าไป
+user: uat03
+pass: uat03
+email: uat03@rsu.hpc.local
+role: user
 
