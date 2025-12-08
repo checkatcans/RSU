@@ -1,0 +1,32 @@
+services:
+      ollama:
+        volumes:
+          - ollama:/root/.ollama
+        container_name: ollama
+        pull_policy: always
+        tty: true
+        restart: unless-stopped
+        image: ollama/ollama:latest
+      open-webui:
+        build:
+          context: .
+          args:
+            OLLAMA_BASE_URL: '/ollama'
+          dockerfile: Dockerfile # If you have a custom Dockerfile for Open WebUI
+        image: ghcr.io/open-webui/open-webui:main # Or specify a specific tag
+        container_name: open-webui
+        volumes:
+          - open-webui:/app/backend/data
+        depends_on:
+          - ollama
+        ports:
+          - 3000:8080 # Adjust the host port (left side) if 3000 is in use
+        environment:
+          - 'OLLAMA_BASE_URL=http://ollama:11434'
+          - 'WEBUI_SECRET_KEY=' # Set a strong secret key for production
+        extra_hosts:
+          - host.docker.internal:host-gateway
+        restart: unless-stopped
+    volumes:
+      ollama: {}
+      open-webui: {}
