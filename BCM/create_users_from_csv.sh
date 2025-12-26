@@ -112,15 +112,14 @@ tail -n +2 "$CSV_FILE" | while IFS=, read -r USERNAME PASSWORD GROUP EMAIL PACKA
         echo "    ✓ SLURM account exists"
     fi
     
-    # 4. Add user to SLURM with package-based limits
+    # 4. Add user to SLURM with package-based limits (NO MaxSubmitJobs)
     echo "  [4/5] Adding user to SLURM..."
     if sacctmgr -i add user $USERNAME \
         cluster=$CLUSTER_NAME \
         account=$SLURM_ACCOUNT \
         DefaultAccount=$SLURM_ACCOUNT \
         GrpTRES=cpu=${CPU},${GRES},mem=${MEM} \
-        MaxJobs=${MAX_JOBS} \
-        MaxSubmitJobs=$((MAX_JOBS * 2)) 2>/dev/null; then
+        MaxJobs=${MAX_JOBS} 2>/dev/null; then
         echo "    ✓ SLURM user added with package $PACKAGE limits"
     else
         echo "    ! SLURM user already exists, updating limits..."
@@ -128,8 +127,7 @@ tail -n +2 "$CSV_FILE" | while IFS=, read -r USERNAME PASSWORD GROUP EMAIL PACKA
             cluster=$CLUSTER_NAME \
             account=$SLURM_ACCOUNT \
             set GrpTRES=cpu=${CPU},${GRES},mem=${MEM} \
-            MaxJobs=${MAX_JOBS} \
-            MaxSubmitJobs=$((MAX_JOBS * 2))
+            MaxJobs=${MAX_JOBS}
         echo "    ✓ SLURM limits updated"
     fi
     
@@ -150,8 +148,4 @@ echo "=================================="
 echo "All users processed!"
 echo ""
 echo "Verify SLURM configuration:"
-echo "  sacctmgr show assoc format=cluster,account,user%15,GrpTRES%85,MaxJobs where account=g_Csc490"
-echo ""
-echo "Test Kubernetes for a user:"
-echo "  su - Csc490-01"
-echo "  kubectl get pods"
+echo "  sacctmgr show assoc format=cluster,account,user%15,GrpTRES%85,MaxJobs where account=g_$GROUP"
