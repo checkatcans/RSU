@@ -108,25 +108,20 @@ tail -n +2 "$CSV_FILE" | tr -d '\r' | while IFS=, read -r USERNAME PASSWORD GROU
     
     # 1. Create user in Bright CM
     echo "  [1/5] Creating CM user..."
-    if cmsh -c "user; add $USERNAME; set password $PASSWORD; set email $EMAIL; commit;" 2>&1; then
-        echo "    ✓ CM user created or already exists"
-    else
-        echo "    ! Error creating CM user"
-    fi
+    cmsh -c "user; add $USERNAME; set password $PASSWORD; set email $EMAIL; commit;" 2>&1
+    echo "    ✓ CM user step completed"
     
     # 2. Add to group
     echo "  [2/5] Adding to group $GROUP..."
-    if cmsh -c "group; use $GROUP; append members $USERNAME; commit" 2>&1; then
-        echo "    ✓ Added to group or already in group"
-    else
-        echo "    ! Error adding to group"
-    fi
+    cmsh -c "group; use $GROUP; append members $USERNAME; commit" 2>&1
+    echo "    ✓ Group assignment step completed"
     
     # 3. Setup SLURM account
     SLURM_ACCOUNT="g_${GROUP}"
     echo "  [3/5] Setting up SLURM account $SLURM_ACCOUNT..."
     
-    if ! sacctmgr -n show account $SLURM_ACCOUNT cluster=$CLUSTER_NAME 2>/dev/null | grep -q "$SLURM_ACCOUNT"; then
+    # Check if account exists using grep
+    if ! sacctmgr show account | grep -q "^[[:space:]]*$SLURM_ACCOUNT[[:space:]]"; then
         echo "    Creating SLURM account..."
         sacctmgr -i add account $SLURM_ACCOUNT \
             cluster=$CLUSTER_NAME \
@@ -134,37 +129,37 @@ tail -n +2 "$CSV_FILE" | tr -d '\r' | while IFS=, read -r USERNAME PASSWORD GROU
             Description="Auto-created for group $GROUP"
         echo "    ✓ SLURM account created"
     else
-        echo "    ✓ SLURM account exists"
+        echo "    ✓ SLURM account already exists"
     fi
     
     # 4. Add user to SLURM with package-based limits
     echo "  [4/5] Adding user to SLURM..."
-    if sacctmgr -i add user $USERNAME \
-        cluster=$CLUSTER_NAME \
-        account=$SLURM_ACCOUNT \
-        DefaultAccount=$SLURM_ACCOUNT \
-        GrpTRES=cpu=${CPU},${GRES},mem=${MEM} \
-        MaxJobs=${MAX_JOBS} 2>&1; then
-        echo "    ✓ SLURM user added with package $PACKAGE limits"
-    else
-        echo "    ! SLURM user already exists, updating limits..."
+    
+    # Check if user already exists using grep
+    if sacctmgr show user | grep -q "^[[:space:]]*$USERNAME[[:space:]]"; then
+        echo "    User exists, updating limits..."
         sacctmgr -i modify user $USERNAME \
-            cluster=$CLUSTER_NAME \
-            account=$SLURM_ACCOUNT \
+            where cluster=$CLUSTER_NAME account=$SLURM_ACCOUNT \
             set GrpTRES=cpu=${CPU},${GRES},mem=${MEM} \
             MaxJobs=${MAX_JOBS}
         echo "    ✓ SLURM limits updated"
+    else
+        echo "    Adding new user..."
+        sacctmgr -i add user $USERNAME \
+            cluster=$CLUSTER_NAME \
+            account=$SLURM_ACCOUNT \
+            DefaultAccount=$SLURM_ACCOUNT \
+            GrpTRES=cpu=${CPU},${GRES},mem=${MEM} \
+            MaxJobs=${MAX_JOBS}
+        echo "    ✓ SLURM user added with package $PACKAGE limits"
     fi
     
     # 5. Setup Kubernetes namespace
     echo "  [5/5] Setting up Kubernetes..."
-    if cm-kubernetes-setup --add-user "$USERNAME" --operators cm-jupyter-kernel-operator 2>&1; then
-        echo "    ✓ Kubernetes namespace created or already exists"
-    else
-        echo "    ! Error in Kubernetes setup"
-    fi
+    cm-kubernetes-setup --add-user "$USERNAME" --operators cm-jupyter-kernel-operator 2>&1
+    echo "    ✓ Kubernetes setup step completed"
     
-    echo "  ✓ User $USERNAME completed successfully!"
+    echo "  ✓ User $USERNAME processing completed!"
     
 done
 
@@ -174,3 +169,7 @@ echo "All users processed!"
 echo ""
 echo "Verify SLURM configuration:"
 echo "  sacctmgr show assoc format=cluster,account,user%15,GrpTRES%120,MaxJobs where account=g_csc490"
+echo ""
+echo "Test with user:"
+echo "  su - csc490-01"
+echo "  kubectl get pods"
