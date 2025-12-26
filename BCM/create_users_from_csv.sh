@@ -121,7 +121,7 @@ tail -n +2 "$CSV_FILE" | tr -d '\r' | while IFS=, read -r USERNAME PASSWORD GROU
     echo "  [3/5] Setting up SLURM account $SLURM_ACCOUNT..."
     
     # Check if account exists using grep
-    if ! sacctmgr show account | grep -q "^[[:space:]]*$SLURM_ACCOUNT[[:space:]]"; then
+    if ! sacctmgr show account | grep -q "$SLURM_ACCOUNT"; then
         echo "    Creating SLURM account..."
         sacctmgr -i add account $SLURM_ACCOUNT \
             cluster=$CLUSTER_NAME \
