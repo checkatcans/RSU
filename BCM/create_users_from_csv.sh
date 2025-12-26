@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CSV_FILE="Format_import_RSU.csv"
+CSV_FILE="Format_import_RSU_2.csv"
 CLUSTER_NAME="rsu-slurm"
 
 # Define all GPU profiles in your system
@@ -62,15 +62,29 @@ build_gres_string() {
 echo "Starting user creation process..."
 echo "=================================="
 
-# Read CSV (skip header)
-tail -n +2 "$CSV_FILE" | while IFS=, read -r USERNAME PASSWORD GROUP EMAIL PACKAGE; do
+# Read CSV (skip header) and handle both Unix and DOS line endings
+tail -n +2 "$CSV_FILE" | tr -d '\r' | while IFS=, read -r USERNAME PASSWORD GROUP EMAIL PACKAGE; do
     
-    # Trim whitespace
-    USERNAME=$(echo "$USERNAME" | xargs)
-    PASSWORD=$(echo "$PASSWORD" | xargs)
-    GROUP=$(echo "$GROUP" | xargs)
-    EMAIL=$(echo "$EMAIL" | xargs)
-    PACKAGE=$(echo "$PACKAGE" | xargs)
+    # Trim whitespace and remove any remaining control characters
+    USERNAME=$(echo "$USERNAME" | xargs | tr -d '\r\n')
+    PASSWORD=$(echo "$PASSWORD" | xargs | tr -d '\r\n')
+    GROUP=$(echo "$GROUP" | xargs | tr -d '\r\n')
+    EMAIL=$(echo "$EMAIL" | xargs | tr -d '\r\n')
+    PACKAGE=$(echo "$PACKAGE" | xargs | tr -d '\r\n')
+    
+    # Skip empty lines
+    if [ -z "$USERNAME" ]; then
+        continue
+    fi
+    
+    # Debug: Show what we read
+    echo ""
+    echo "DEBUG: Read from CSV:"
+    echo "  Username: '$USERNAME'"
+    echo "  Password: '$PASSWORD'"
+    echo "  Group: '$GROUP'"
+    echo "  Email: '$EMAIL'"
+    echo "  Package: '$PACKAGE'"
     
     # Validate package
     if [[ ! "$PACKAGE" =~ ^(S|M|L|XL)$ ]]; then
@@ -94,18 +108,18 @@ tail -n +2 "$CSV_FILE" | while IFS=, read -r USERNAME PASSWORD GROUP EMAIL PACKA
     
     # 1. Create user in Bright CM
     echo "  [1/5] Creating CM user..."
-    if cmsh -c "user; add $USERNAME; set password $PASSWORD; set email $EMAIL; commit;" 2>/dev/null; then
-        echo "    ✓ CM user created"
+    if cmsh -c "user; add $USERNAME; set password $PASSWORD; set email $EMAIL; commit;" 2>&1; then
+        echo "    ✓ CM user created or already exists"
     else
-        echo "    ! CM user already exists or error occurred"
+        echo "    ! Error creating CM user"
     fi
     
     # 2. Add to group
     echo "  [2/5] Adding to group $GROUP..."
-    if cmsh -c "group; use $GROUP; append members $USERNAME; commit" 2>/dev/null; then
-        echo "    ✓ Added to group"
+    if cmsh -c "group; use $GROUP; append members $USERNAME; commit" 2>&1; then
+        echo "    ✓ Added to group or already in group"
     else
-        echo "    ! Already in group or error occurred"
+        echo "    ! Error adding to group"
     fi
     
     # 3. Setup SLURM account
@@ -130,7 +144,7 @@ tail -n +2 "$CSV_FILE" | while IFS=, read -r USERNAME PASSWORD GROUP EMAIL PACKA
         account=$SLURM_ACCOUNT \
         DefaultAccount=$SLURM_ACCOUNT \
         GrpTRES=cpu=${CPU},${GRES},mem=${MEM} \
-        MaxJobs=${MAX_JOBS} 2>/dev/null; then
+        MaxJobs=${MAX_JOBS} 2>&1; then
         echo "    ✓ SLURM user added with package $PACKAGE limits"
     else
         echo "    ! SLURM user already exists, updating limits..."
@@ -144,10 +158,10 @@ tail -n +2 "$CSV_FILE" | while IFS=, read -r USERNAME PASSWORD GROUP EMAIL PACKA
     
     # 5. Setup Kubernetes namespace
     echo "  [5/5] Setting up Kubernetes..."
-    if cm-kubernetes-setup --add-user "$USERNAME" --operators cm-jupyter-kernel-operator 2>/dev/null; then
-        echo "    ✓ Kubernetes namespace created"
+    if cm-kubernetes-setup --add-user "$USERNAME" --operators cm-jupyter-kernel-operator 2>&1; then
+        echo "    ✓ Kubernetes namespace created or already exists"
     else
-        echo "    ! Kubernetes setup failed or already exists"
+        echo "    ! Error in Kubernetes setup"
     fi
     
     echo "  ✓ User $USERNAME completed successfully!"
@@ -159,10 +173,4 @@ echo "=================================="
 echo "All users processed!"
 echo ""
 echo "Verify SLURM configuration:"
-echo "  sacctmgr show assoc format=cluster,account,user%15,GrpTRES%120,MaxJobs where account=g_Csc490"
-echo ""
-echo "Package Summary (All with MaxJobs=5):"
-echo "  S:  2 CPU,  32GB RAM, 1x 1g.18gb GPU"
-echo "  M:  4 CPU,  64GB RAM, 1x 1g.35gb GPU"
-echo "  L:  8 CPU, 128GB RAM, 1x 3g.71gb GPU"
-echo "  XL: 16 CPU, 256GB RAM, 1x 7g.141gb GPU"
+echo "  sacctmgr show assoc format=cluster,account,user%15,GrpTRES%120,MaxJobs where account=g_csc490"
