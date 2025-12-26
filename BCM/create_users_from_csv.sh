@@ -3,8 +3,11 @@
 CSV_FILE="Format_import_RSU.csv"
 CLUSTER_NAME="rsu-slurm"
 
+# Define all GPU profiles in your system
+ALL_GPU_PROFILES=("1g.18gb" "1g.35gb" "3g.71gb" "7g.141gb")
+
 # Define resource packages
-declare -A PKG_GPU_TYPE=(
+declare -A PKG_ALLOWED_GPU=(
     ["S"]="1g.18gb"
     ["M"]="1g.35gb"
     ["L"]="3g.71gb"
@@ -32,20 +35,28 @@ declare -A PKG_MEM=(
     ["XL"]="256G"
 )
 
-declare -A PKG_MAX_JOBS=(
-    ["S"]=3
-    ["M"]=5
-    ["L"]=8
-    ["XL"]=10
-)
+# All packages have MaxJobs=5
+MAX_JOBS=5
 
-# Function to build GRES string based on package
+# Function to build GRES string with all profiles
 build_gres_string() {
     local package=$1
-    local gpu_type=${PKG_GPU_TYPE[$package]}
+    local allowed_gpu=${PKG_ALLOWED_GPU[$package]}
     local gpu_count=${PKG_GPU_COUNT[$package]}
     
-    echo "gres/gpu=${gpu_count},gres/gpu:${gpu_type}=${gpu_count}"
+    # Start with total GPU count
+    local gres_string="gres/gpu=${gpu_count}"
+    
+    # Add all GPU profiles (allowed=count, others=0)
+    for profile in "${ALL_GPU_PROFILES[@]}"; do
+        if [ "$profile" = "$allowed_gpu" ]; then
+            gres_string="${gres_string},gres/gpu:${profile}=${gpu_count}"
+        else
+            gres_string="${gres_string},gres/gpu:${profile}=0"
+        fi
+    done
+    
+    echo "$gres_string"
 }
 
 echo "Starting user creation process..."
@@ -75,11 +86,11 @@ tail -n +2 "$CSV_FILE" | while IFS=, read -r USERNAME PASSWORD GROUP EMAIL PACKA
     CPU=${PKG_CPU[$PACKAGE]}
     MEM=${PKG_MEM[$PACKAGE]}
     GPU_COUNT=${PKG_GPU_COUNT[$PACKAGE]}
-    GPU_TYPE=${PKG_GPU_TYPE[$PACKAGE]}
-    MAX_JOBS=${PKG_MAX_JOBS[$PACKAGE]}
+    ALLOWED_GPU=${PKG_ALLOWED_GPU[$PACKAGE]}
     GRES=$(build_gres_string "$PACKAGE")
     
-    echo "  Resources: CPU=${CPU}, RAM=${MEM}, GPU=${GPU_COUNT}x${GPU_TYPE}, MaxJobs=${MAX_JOBS}"
+    echo "  Resources: CPU=${CPU}, RAM=${MEM}, GPU=${GPU_COUNT}x${ALLOWED_GPU}, MaxJobs=${MAX_JOBS}"
+    echo "  GRES: ${GRES}"
     
     # 1. Create user in Bright CM
     echo "  [1/5] Creating CM user..."
@@ -112,7 +123,7 @@ tail -n +2 "$CSV_FILE" | while IFS=, read -r USERNAME PASSWORD GROUP EMAIL PACKA
         echo "    ✓ SLURM account exists"
     fi
     
-    # 4. Add user to SLURM with package-based limits (NO MaxSubmitJobs)
+    # 4. Add user to SLURM with package-based limits
     echo "  [4/5] Adding user to SLURM..."
     if sacctmgr -i add user $USERNAME \
         cluster=$CLUSTER_NAME \
@@ -148,4 +159,10 @@ echo "=================================="
 echo "All users processed!"
 echo ""
 echo "Verify SLURM configuration:"
-echo "  sacctmgr show assoc format=cluster,account,user%15,GrpTRES%85,MaxJobs where account=g_$GROUP"
+echo "  sacctmgr show assoc format=cluster,account,user%15,GrpTRES%120,MaxJobs where account=g_Csc490"
+echo ""
+echo "Package Summary (All with MaxJobs=5):"
+echo "  S:  2 CPU,  32GB RAM, 1x 1g.18gb GPU"
+echo "  M:  4 CPU,  64GB RAM, 1x 1g.35gb GPU"
+echo "  L:  8 CPU, 128GB RAM, 1x 3g.71gb GPU"
+echo "  XL: 16 CPU, 256GB RAM, 1x 7g.141gb GPU"
