@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --job-name=multi-gpu-conda
+#SBATCH --output=logs/out_%j.txt
+#SBATCH --error=logs/err_%j.txt
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=4
+#SBATCH --time=00:10:00
+
+# Activate your environment
+source /data/cm/shared/apps/miniconda3/etc/profile.d/conda.sh
+conda activate multiple_gpu
+
+###################################
+
+echo "GPUs visible: $CUDA_VISIBLE_DEVICES"
+python3 multiple_gpu.py

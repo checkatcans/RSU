@@ -1,0 +1,14 @@
+no change     /cm/shared/apps/miniconda3/condabin/conda
+no change     /cm/shared/apps/miniconda3/bin/conda
+no change     /cm/shared/apps/miniconda3/bin/conda-env
+no change     /cm/shared/apps/miniconda3/bin/activate
+no change     /cm/shared/apps/miniconda3/bin/deactivate
+no change     /cm/shared/apps/miniconda3/etc/profile.d/conda.sh
+no change     /cm/shared/apps/miniconda3/etc/fish/conf.d/conda.fish
+no change     /cm/shared/apps/miniconda3/shell/condabin/Conda.psm1
+no change     /cm/shared/apps/miniconda3/shell/condabin/conda-hook.ps1
+no change     /cm/shared/apps/miniconda3/lib/python3.13/site-packages/xontrib/conda.xsh
+no change     /cm/shared/apps/miniconda3/etc/profile.d/conda.csh
+no change     /home/uat03/.bashrc
+No action taken.
+GPUs visible: MIG-c9be6afd-7b6b-55f9-bd44-a0ba345b3334,MIG-c44fe68b-4eb3-5785-8935-f2a9e847c25e

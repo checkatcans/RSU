@@ -1,0 +1,1 @@
+GPUs visible: MIG-c9be6afd-7b6b-55f9-bd44-a0ba345b3334,MIG-c44fe68b-4eb3-5785-8935-f2a9e847c25e

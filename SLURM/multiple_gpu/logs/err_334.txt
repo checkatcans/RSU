@@ -1,0 +1,7 @@
+
+CondaError: Run 'conda init' before 'conda activate'
+
+Traceback (most recent call last):
+  File "/data/home/uat03/multiple_gpu/multiple_gpu.py", line 1, in <module>
+    import torch
+ModuleNotFoundError: No module named 'torch'

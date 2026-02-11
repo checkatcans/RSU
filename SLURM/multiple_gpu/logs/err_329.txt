@@ -1,0 +1,9 @@
+
+CondaError: Run 'conda init' before 'conda activate'
+
+/home/uat03/.local/lib/python3.9/site-packages/torch/nn/parallel/data_parallel.py:38: UserWarning: 
+    There is an imbalance between your GPUs. You may want to exclude GPU 1 which
+    has less than 75% of the memory or cores of GPU 0. You can do so by setting
+    the device_ids argument to DataParallel, or by setting the CUDA_VISIBLE_DEVICES
+    environment variable.
+  warnings.warn(

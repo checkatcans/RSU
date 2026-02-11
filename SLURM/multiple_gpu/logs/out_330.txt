@@ -1,0 +1,79 @@
+no change     /cm/shared/apps/miniconda3/condabin/conda
+no change     /cm/shared/apps/miniconda3/bin/conda
+no change     /cm/shared/apps/miniconda3/bin/conda-env
+no change     /cm/shared/apps/miniconda3/bin/activate
+no change     /cm/shared/apps/miniconda3/bin/deactivate
+no change     /cm/shared/apps/miniconda3/etc/profile.d/conda.sh
+no change     /cm/shared/apps/miniconda3/etc/fish/conf.d/conda.fish
+no change     /cm/shared/apps/miniconda3/shell/condabin/Conda.psm1
+no change     /cm/shared/apps/miniconda3/shell/condabin/conda-hook.ps1
+no change     /cm/shared/apps/miniconda3/lib/python3.13/site-packages/xontrib/conda.xsh
+no change     /cm/shared/apps/miniconda3/etc/profile.d/conda.csh
+no change     /home/uat03/.bashrc
+No action taken.
+GPUs visible: MIG-c9be6afd-7b6b-55f9-bd44-a0ba345b3334,MIG-c44fe68b-4eb3-5785-8935-f2a9e847c25e
+Using 2 GPUs with DataParallel
+Output: tensor([[-0.0112],
+        [-0.2834],
+        [ 0.4001],
+        [-0.9209],
+        [-0.3894],
+        [ 0.4102],
+        [-0.2134],
+        [ 0.0655],
+        [-0.4651],
+        [-0.3386],
+        [-1.0529],
+        [-0.6531],
+        [-0.2399],
+        [ 0.2729],
+        [-0.8861],
+        [-0.0621],
+        [ 0.0352],
+        [-0.3786],
+        [ 0.1026],
+        [ 0.3628],
+        [-0.3095],
+        [-0.3690],
+        [-0.1390],
+        [ 0.1291],
+        [ 0.4230],
+        [-0.1430],
+        [ 0.1716],
+        [-0.7288],
+        [-0.2515],
+        [ 0.1865],
+        [-0.6728],
+        [ 0.4725],
+        [ 0.1655],
+        [-0.4726],
+        [-0.2685],
+        [ 0.1422],
+        [ 0.4244],
+        [-0.4052],
+        [ 0.2035],
+        [ 0.1454],
+        [-0.4118],
+        [-0.5327],
+        [-0.8898],
+        [-0.3744],
+        [ 0.3591],
+        [-0.5938],
+        [ 0.2782],
+        [-0.1455],
+        [ 0.0183],
+        [ 0.1495],
+        [ 0.0215],
+        [ 0.3686],
+        [ 0.0311],
+        [ 0.0871],
+        [ 0.1430],
+        [-0.5355],
+        [-0.9399],
+        [-0.5944],
+        [ 0.3654],
+        [-0.3333],
+        [ 0.0129],
+        [-1.4317],
+        [-0.4734],
+        [-0.0627]], device='cuda:0', grad_fn=<GatherBackward>)
